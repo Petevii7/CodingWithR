@@ -1,0 +1,408 @@
+---
+title: "CS601C Fall Project One"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+date: "2024-10-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Peter Treacy
+
+
+# College
+
+### A
+```{r view}
+
+setwd("~/Desktop/CompStatistics")
+
+data <- read.csv("~/Desktop/CompStatistics/college.csv")
+
+```
+
+### B
+
+```{r pressure, echo=FALSE}
+head(data)
+```
+
+### C
+````{r Continued, message=FALSE}
+#i
+summary(data)
+````
+
+````{r continued}
+#ii
+
+data <- read.csv("~/Desktop/CompStatistics/college.csv")
+
+num_data <- data[, sapply(data, is.numeric)]
+
+selectnum_data <- num_data[, 1:10]
+
+panel.custom <- function(x, y) {
+  points(x, y, pch = 1, col = "black", cex = .1)
+  abline(lm(y ~ x), col = "red")  
+}
+par(mar = c(5, 5, 4, 2))
+
+pairs(selectnum_data,
+      panel = panel.custom,             
+      main = "Scatterplot Matrix: First 10 Columns"
+)
+````
+
+````{r iii, message=FALSE}
+
+#iii Private
+data$Private <- as.factor(data$Private)
+
+# Boxplot
+boxplot(Outstate ~ Private, data = data,
+        main = "Outstate Tuition by Private/Public",
+        xlab = "Private",
+        ylab = "Outstate Tuition",
+        col = c("lightblue", "lightgreen"))
+````
+
+````{r iv, messages=FALSE}
+#iv
+
+# Elite = 'Top10perc' column
+data$Elite <- ifelse(data$Top10perc > 50, "Elite", "Non-Elite")
+
+# Elite to a categorical variable
+data$Elite <- as.factor(data$Elite)
+
+# Out Total
+table(data$Elite)
+````
+
+````{r v, message=FALSE}
+#v
+summary(data$Elite)
+
+boxplot(Outstate ~ Elite, data = data,
+        main = "Boxplot of Outstate Tuition by Elite Status",
+        xlab = "Elite Status",
+        ylab = "Outstate Tuition",
+        col = c("lightblue", "lightgreen"))
+
+````
+
+````{r vi, message=FALSE}
+#vi
+data <- read.csv("~/Desktop/CompStatistics/college.csv", stringsAsFactors = TRUE)
+
+par(mfrow=c(2,2))
+
+hist(data$Outstate, breaks = 10, 
+     main = "Outstate Tuition", xlab = "Outstate Tuition", 
+     col = "lightblue")
+
+hist(data$Room.Board, breaks = 15, 
+     main = "Room and Board Costs", xlab = "Room and Board", 
+     col = "darkblue")
+
+hist(data$PhD, breaks = 20, 
+     main = "Percentage of PhDs", xlab = "PhD Percentage", 
+     col = "lightpink")
+
+hist(data$Top10perc, breaks = 8, 
+     main = "Top 10% of High School", xlab = "Top 10% of High School", 
+     col = "lightyellow")
+````
+
+````{r vii, message=FALSE}
+#vii
+
+data <- read.csv("college.csv")
+
+cdata <- data[!is.na(data$Accept) & !is.na(data$Apps) & !is.na(data$Grad.Rate), ]
+
+cdata$Accept_Rate <- (cdata$Accept / cdata$Apps) * 100
+
+model <- lm(Grad.Rate ~ Accept_Rate, data = cdata)
+
+plot(cdata$Accept_Rate, cdata$Grad.Rate, 
+     main = "Acceptance Rate vs Graduation Rate",
+     xlab = "Acceptance Rate (%)", 
+     ylab = "Graduation Rate", 
+     pch = 20, col = "black")
+abline(model, col = "red")
+````
+
+### Conclusion:
+You could conclude that colleges with higher acceptance rates tend to have higher graduation rates. 
+This might suggest that more inclusive colleges do well at retaining and graduating students.
+
+# Auto
+
+````{r Auto Dataset, message=FALSE}
+setwd("~/Desktop/CompStatistics")
+
+auto_data <- read.csv("~/Desktop/CompStatistics/auto.csv")
+
+str(auto_data)
+````
+### 2.A
+Quantitative: mpg, cylinders, displacement, horsepower, weight, acceleration, year.
+
+Qualitative: origin, name.
+
+### 2.B
+````{r 2.B, message=FALSE}
+range(auto_data$mpg)
+range(auto_data$cylinders)
+range(auto_data$displacement)
+range(auto_data$horsepower)
+range(auto_data$weight)
+range(auto_data$acceleration)
+range(auto_data$year)
+````
+### 2.C
+````{r 2.C, message=FALSE}
+auto_data <- read.csv("~/Desktop/CompStatistics/auto.csv")
+
+#mpg
+mean(auto_data$mpg)
+sd(auto_data$mpg)
+
+#cylinders
+mean(auto_data$cylinders)
+sd(auto_data$cylinders)
+
+#displacement
+mean(auto_data$displacement)
+sd(auto_data$displacement)
+
+#horsepower
+mean(auto_data$horsepower)
+sd(auto_data$horsepower)
+
+#weight
+mean(auto_data$weight)
+sd(auto_data$weight)
+
+#acceleration
+mean(auto_data$acceleration)
+sd(auto_data$acceleration)
+
+#year
+mean(auto_data$year)
+sd(auto_data$year)
+````
+
+### 2.D
+````{r 2.D, message=FALSE}
+auto_data <- read.csv("~/Desktop/CompStatistics/auto.csv")
+
+#range, mean standard deviation for the original dataset
+roriginal <- sapply(auto_data[, sapply(auto_data, is.numeric)], range)
+moriginal <- sapply(auto_data[, sapply(auto_data, is.numeric)], mean)
+sdoriginal <- sapply(auto_data[, sapply(auto_data, is.numeric)], sd)
+
+print(roriginal)
+print(moriginal)
+print(sdoriginal)
+````
+
+````{r 2.inspect, message=FALSE}
+#remove 10 rows
+rows_to_remove <- sample(1:nrow(auto_data), 10)
+auto_data_subset <- auto_data[-rows_to_remove, ]
+
+#range, mean, and standard deviation for the subset
+range_subset <- sapply(auto_data_subset[, sapply(auto_data_subset, is.numeric)], range)
+mean_subset <- sapply(auto_data_subset[, sapply(auto_data_subset, is.numeric)], mean)
+sd_subset <- sapply(auto_data_subset[, sapply(auto_data_subset, is.numeric)], sd)
+
+print(range_subset)
+print(mean_subset)
+print(sd_subset)
+````
+
+````{r 2inspect2, message=FALSE}
+#mean (percentage change)
+mean_comparison <- 100 * (moriginal - mean_subset) / moriginal
+mean_comparison
+
+#standard deviation (percentage change)
+sd_comparison <- 100 * (sdoriginal - sd_subset) / sdoriginal
+sd_comparison
+````
+
+Conclusion
+The changes in _original to _subset were fairly minor and did not have a subsational impact on the outputs. This is probably due to how large the original dataset is.
+
+#2.E
+````{r 2.E, message=FALSE}
+auto_data <- read.csv("~/Desktop/CompStatistics/auto.csv")
+
+library(ggplot2)
+
+lm_mpg_hp <- lm(mpg ~ horsepower, data = auto_data)
+
+# Scatterplot of mpg vs horsepower
+plot(auto_data$horsepower, auto_data$mpg,
+     main = "MPG vs Horsepower",
+     xlab = "Horsepower", ylab = "MPG", pch = 19, col = "darkblue")
+abline(lm_mpg_hp, col = "red", lwd = 2)
+
+plot(auto_data$weight, auto_data$mpg,
+     main = "MPG vs Weight",
+     xlab = "Weight", ylab = "MPG", pch = 19, col = "darkgreen")
+
+plot(auto_data$displacement, auto_data$mpg,
+     main = "MPG vs Displacement",
+     xlab = "Displacement", ylab = "MPG", pch = 19, col = "lightblue")
+````
+
+These plots show negative relationships between mpg and horsepower, weight, and displacement because as these variables increase the mpg tends to decrease. Horsepower is a strong predictor of mpg, as we see with the negative slope in the scatterplot. Displacement's plot shows us that larger engines(cars) typically consume more fuel, leading to lower mpg.
+
+# Boston
+
+### 3.A
+````{r Boston Data Set, message=FALSE}
+setwd("~/Desktop/CompStatistics")
+
+boston_data <- read.csv("~/Desktop/CompStatistics/boston.csv")
+# number of row 
+nrow(boston_data) 
+# number of columns
+ncol(boston_data)
+````
+Each row represents a single observation, a house or property, in a specific suburb of Boston. Each column in the dataset typically represents a different attribute (feature) of the house or the neighborhood such as crime per capita, or proportion of residential land zoned for lots over 25,000 sq. ft
+
+### 3.B
+````{r 3.B, message=FALSE}
+boston_data <- read.csv("~/Desktop/CompStatistics/boston.csv")
+
+pairs(boston_data[, c("crim", "lstat", "medv", "tax", "rm")],
+      main = "Boston Housing Predictors")
+````
+
+### Conclusion
+Higher crime rates and lower-status populations are associated with lower home values.
+
+Crime rate (crim) vs. median home value (medv), and possibly crim vs. rm (number of rooms), are likely to show strong negative relationships. Higher crime rates generally correspond to lower home values and smaller homes.
+
+Number of rooms (rm) vs. median home value (medv) typically shows a strong positive correlation, as larger homes are associated with higher home values.
+
+Relationships between property tax (tax) and other variables like crim, rm, and medv may show weak correlations, as taxes can vary independently of home size or crime rates in different areas.
+
+### 3.C
+````{r 3.C, message=FALSE}
+boston_data <- read.csv("~/Desktop/CompStatistics/boston.csv")
+
+#crime rate vs lower status population
+crimlstat <- lm(crim ~ lstat, data = boston_data)
+
+summary(crimlstat)
+````
+
+### Conclusion
+The relationship between crim and lstat is likely to be significant predictors, indicating that crime rates increase as the percentage of lower-status population increases. The scatterplot and regression model provide a clearer view of this.
+
+### 3.D
+````{r 3.D, message=FALSE}
+summary(boston_data$crim)
+summary(boston_data$tax)
+
+# suburbs with crime rates in the top 10%
+high_crime_threshold <- quantile(boston_data$crim, 0.9)  
+# 90th percentile
+high_crime_suburbs <- boston_data[boston_data$crim > high_crime_threshold, ]
+
+# suburbs with tax rates in the top 10%
+high_tax_threshold <- quantile(boston_data$tax, 0.9)  
+# 90th percentile
+high_tax_suburbs <- boston_data[boston_data$tax > high_tax_threshold, ]
+
+# suburbs with high tax rates
+high_tax_suburbs[, c("tax", "medv", "crim")]
+
+hist(boston_data$crim, breaks = 50, main = "Distribution of Crimes",
+     xlab = "Crime Rate", col = "lightblue")
+
+hist(boston_data$tax, breaks = 50, main = "Distrubution of Taxes",
+     xlab = "Tax Rate", col = "lightgreen")
+
+# scatterplot for Pupil-Teacher Ratio vs Median Home Value
+plot(boston_data$ptratio, boston_data$medv,
+     main = "Pupil-Teacher Ratio vs Median Home Value",
+     xlab = "Pupil-Teacher Ratio (Number of Students per Teacher)", 
+     ylab = "Median Home Value (in $1000s)", 
+     pch = 19, col = "darkblue", cex = 1.3)
+grid()
+````
+
+### Conclusion
+
+The range of predictors such as crime rate (crim), tax rate (tax), and pupil-teacher ratio (ptratio) highlight disparities across suburbs. 
+
+Areas with high crime rates are likely less desirable, leading to lower property values and a lower ptratio, while some suburbs maintain very low crime levels, suggesting safer environments.
+
+Tax rates vary widely, reflecting differences in local policies and possibly the quality of public services or schools. Likewise, the range in pupil-teacher ratios suggests disparities in educational resources, where some suburbs benefit from lower ratios and better educational quality, while others face higher ratios, potentially indicating overcrowded schools. 
+
+This variability shows the contrasting living conditions across the Boston area, with some suburbs offering safer environments, better educational opportunities, and potentially higher taxes for improved services.
+
+### 3.E
+````{r 3.E, message=FALSE}
+#3.E
+# number of suburbs along the Charles River
+
+num_suburbs_bound_river <- sum(boston_data$chas == 1)
+
+num_suburbs_bound_river
+````
+### 3.F
+````{r 3.F, message=FALSE}
+boston_data <- read.csv("~/Desktop/CompStatistics/boston.csv")
+
+# median pupil-teacher ratio
+median_ptratio <- median(boston_data$ptratio)
+
+median_ptratio
+````
+
+### 3.G
+````{r 3.G, message=FALSE}
+# lowest median value of suburban homes
+min_medv_row <- which.min(boston_data$medv)
+
+lowest_medv_suburb <- boston_data[min_medv_row, ]
+lowest_medv_suburb
+
+````
+
+## Conclusion
+The suburb with the lowest median home value (medv) (399) likely suffers from a combination of factors that make it less desirable for homebuyers.
+
+A high crime rate (crim) is the most important negative predictor when homebuyers are viewing a suburban town. The ptratio (pupil-teacher) suggests that the educational oppurtunies in the suburb are limited, which could further qdd to it's negative appeal (children, families, etc)
+
+The lstat (high percentage of lower-status residents) is 30.59, which is far away from the lowest on the Boston Housing list, which is 1.73. This indicates socio-economic challenges, which often correlate with lower demand for housing and lower property values. Fewer rooms per dwelling (rm) 5.453 is the median for this Boston suburb town vs the highest listed at 8.780 which is suggests that the homes are smaller, which is another reason why property values are low. 
+
+This shows how a combination of socio-economic, safety, and educational factors can influence housing markets and 399 would not be viewed as desirable. 
+
+### 3.H
+````{r 3.H, message=FALSE}
+# number of suburbs with more than 7 rooms
+suburb7_rooms <- sum(boston_data$rm > 7)
+
+# the number of suburbs with more than 8 rooms
+suburb8_rooms <- sum(boston_data$rm > 8)
+
+# Display the results
+suburb7_rooms
+suburb8_rooms
+
+````
+### Conclusion
+Suburbs with an average of more than 8 rooms per dwelling are typically found in wealthier areas. These neighborhoods often feature higher property values, lower crime rates, and access to better school resources, offering a distinct contrast to other regions in the dataset. This analysis sheds light on the characteristics that set these affluent suburbs apart.
